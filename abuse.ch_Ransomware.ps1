@@ -1,4 +1,4 @@
-﻿#set the maximum amount of items to import from each website
+#set the maximum amount of items to import from each website
 $ItemMax = 200000
 $Count = 0
 $Path_32 = "C:\Program Files (x86)\LogRhythm\LogRhythm Job Manager\config\list_import\"
@@ -51,19 +51,19 @@ $URLURL = "https://ransomwaretracker.abuse.ch/downloads/RW_URLBL.txt"
 $DomURL = "https://ransomwaretracker.abuse.ch/downloads/RW_DOMBL.txt"
 
 $IPblocklist = New-Object Net.WebClient
-$IPblocklist.DownloadString($IPURL) > tempFeodoIP.txt
+$IPblocklist.DownloadString($IPURL) > tempIP.txt
 
 #checks for blank text file and exits the program if the file is blank
-Get-Content tempFeodoIP.txt | Measure-Object -word
+Get-Content tempIP.txt | Measure-Object -word
 if ($word -eq 0){
     Break
     }
     
 #Get-Content will put each individual line in the text file as an individual object which sets up the "if" loop below.
-$IPblocklist = Get-Content tempFeodoIP.txt
+$IPblocklist = Get-Content tempIP.txt
 
 # removes temp blocklist text file
-#Remove-Item tempFeodoIP.txt
+Remove-Item tempIP.txt
 
 $IPblocklist | ForEach-Object{
      if( $_ -match "^[^#]" -and $ItemMax -gt 0 ){
@@ -89,19 +89,19 @@ $ItemMax = 200000
 $Count = 0
 
 $URLblocklist = New-Object Net.WebClient
-$URLblocklist.DownloadString($URLURL) > tempFeodoURL.txt
+$URLblocklist.DownloadString($URLURL) > tempURL.txt
 
 #checks for blank text file and exits the program if the file is blank
-Get-Content tempFeodoURL.txt | Measure-Object -word
+Get-Content tempURL.txt | Measure-Object -word
 if ($word -eq 0){
     Break
     }
     
 #Get-Content will put each individual line in the text file as an individual object which sets up the "if" loop below.
-$URLblocklist = Get-Content tempFeodoURL.txt
+$URLblocklist = Get-Content tempURL.txt
 
 # removes temp blocklist text file
-#Remove-Item tempFeodoURL.txt
+Remove-Item tempURL.txt
 
 $URLblocklist | ForEach-Object{
      if( $_ -match "^[^#]" -and $ItemMax -gt 0 ){
@@ -126,19 +126,19 @@ $ItemMax = 200000
 $Count = 0
 
 $Domblocklist = New-Object Net.WebClient
-$Domblocklist.DownloadString($DomURL) > tempFeodoDom.txt
+$Domblocklist.DownloadString($DomURL) > tempDom.txt
 
 #checks for blank text file and exits the program if the file is blank
-Get-Content tempFeodoDom.txt | Measure-Object -word
+Get-Content tempDom.txt | Measure-Object -word
 if ($word -eq 0){
     Break
     }
     
 #Get-Content will put each individual line in the text file as an individual object which sets up the "if" loop below.
-$Domblocklist = Get-Content tempFeodoDom.txt
+$Domblocklist = Get-Content tempDom.txt
 
 # removes temp blocklist text file
-#Remove-Item tempFeodoURL.txt
+Remove-Item tempDom.txt
 
 $Domblocklist | ForEach-Object{
      if( $_ -match "^[^#]" -and $ItemMax -gt 0 ){
