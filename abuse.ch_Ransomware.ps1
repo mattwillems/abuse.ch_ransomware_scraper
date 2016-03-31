@@ -1,4 +1,4 @@
-#set the maximum amount of items to import from each website
+﻿#set the maximum amount of items to import from each website
 $ItemMax = 200000
 $Count = 0
 $Path_32 = "C:\Program Files (x86)\LogRhythm\LogRhythm Job Manager\config\list_import\"
@@ -46,6 +46,20 @@ if($netAssembly) {
 [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 ######################
 
+#delete import files if they exist already
+if (Test-Path $IPFilePath) {
+    Write-Host "Deleting existing IP file: $IPFilePath"
+    Remove-Item $IPFilePath
+    }
+if (Test-Path $URLFilePath) {    
+    Write-Host "Deleting existing URL file: $URLFilePath"
+    Remove-Item $URLFilePath
+    }
+if (Test-Path $DomFilePath) {
+    Write-Host "Deleting existing Domain file: $DomFilePath"
+    Remove-Item $DomFilePath
+    }
+
 $IPURL = "https://ransomwaretracker.abuse.ch/downloads/RW_IPBL.txt"
 $URLURL = "https://ransomwaretracker.abuse.ch/downloads/RW_URLBL.txt"
 $DomURL = "https://ransomwaretracker.abuse.ch/downloads/RW_DOMBL.txt"
@@ -56,6 +70,7 @@ $IPblocklist.DownloadString($IPURL) > tempIP.txt
 #checks for blank text file and exits the program if the file is blank
 Get-Content tempIP.txt | Measure-Object -word
 if ($word -eq 0){
+    Write-Host "Empty IP List"
     Break
     }
     
@@ -66,7 +81,7 @@ $IPblocklist = Get-Content tempIP.txt
 Remove-Item tempIP.txt
 
 $IPblocklist | ForEach-Object{
-     if( $_ -match "^[^#]" -and $ItemMax -gt 0 ){
+     if( $_ -match "^\d{1,3}\." -and $ItemMax -gt 0 ){
     
         #decrement count to limit the amount of objects in final text file
         $ItemMax = $ItemMax - 1
@@ -75,12 +90,10 @@ $IPblocklist | ForEach-Object{
         $Count = $Count +1
         
     	## remove trailing text
-    	Foreach-Object {$_ -replace " # .*\b", ""} |
-    	
-    	Sort-Object | out-file $IPFilePath -append } # End of the if statement
-    
-}
+        $_ | out-file $IPFilePath -append
 
+      }
+}
 
 ####################################
 #Now do all the same stuff for URLs#
@@ -92,8 +105,10 @@ $URLblocklist = New-Object Net.WebClient
 $URLblocklist.DownloadString($URLURL) > tempURL.txt
 
 #checks for blank text file and exits the program if the file is blank
+
 Get-Content tempURL.txt | Measure-Object -word
 if ($word -eq 0){
+    Write-Host "Empty URL List"
     Break
     }
     
@@ -104,19 +119,16 @@ $URLblocklist = Get-Content tempURL.txt
 Remove-Item tempURL.txt
 
 $URLblocklist | ForEach-Object{
-     if( $_ -match "^[^#]" -and $ItemMax -gt 0 ){
+     if( $_ -match "^https?:" -and $ItemMax -gt 0 ){
     
         #decrement count to limit the amount of objects in final text file
         $ItemMax = $ItemMax - 1
         
         #increase counter to count number of items on webpage
         $Count = $Count +1
-        
-    	## remove trailing text
-    	Foreach-Object {$_ -replace " # .*\b", ""} |
-    	
-    	Sort-Object | out-file $URLFilePath -append } # End of the if statement
-    
+
+        $_ | out-file $URLFilePath -append
+    }
 }
 
 ####################################
@@ -131,6 +143,7 @@ $Domblocklist.DownloadString($DomURL) > tempDom.txt
 #checks for blank text file and exits the program if the file is blank
 Get-Content tempDom.txt | Measure-Object -word
 if ($word -eq 0){
+        Write-Host "Empty Domain List"
     Break
     }
     
@@ -141,17 +154,16 @@ $Domblocklist = Get-Content tempDom.txt
 Remove-Item tempDom.txt
 
 $Domblocklist | ForEach-Object{
-     if( $_ -match "^[^#]" -and $ItemMax -gt 0 ){
+     if( $_ -match "^\w" -and $ItemMax -gt 0 ){
     
         #decrement count to limit the amount of objects in final text file
         $ItemMax = $ItemMax - 1
         
         #increase counter to count number of items on webpage
         $Count = $Count +1
-        
+
     	## remove trailing text
-    	Foreach-Object {$_ -replace " # .*\b", ""} |
-    	
-    	Sort-Object | out-file $DomFilePath -append } # End of the if statement
-    
+        $_ | out-file $DomFilePath -append
+        
+      }
 }
