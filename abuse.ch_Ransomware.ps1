@@ -81,6 +81,7 @@ $IPblocklist = Get-Content tempIP.txt
 Remove-Item tempIP.txt
 
 $IPblocklist | ForEach-Object{
+     #test if the IP starts with 1-3 digits and a dot
      if( $_ -match "^\d{1,3}\." -and $ItemMax -gt 0 ){
     
         #decrement count to limit the amount of objects in final text file
@@ -89,7 +90,7 @@ $IPblocklist | ForEach-Object{
         #increase counter to count number of items on webpage
         $Count = $Count +1
         
-    	## remove trailing text
+    	#write to output
         $_ | out-file $IPFilePath -append
 
       }
@@ -105,7 +106,6 @@ $URLblocklist = New-Object Net.WebClient
 $URLblocklist.DownloadString($URLURL) > tempURL.txt
 
 #checks for blank text file and exits the program if the file is blank
-
 Get-Content tempURL.txt | Measure-Object -word
 if ($word -eq 0){
     Write-Host "Empty URL List"
@@ -119,6 +119,7 @@ $URLblocklist = Get-Content tempURL.txt
 Remove-Item tempURL.txt
 
 $URLblocklist | ForEach-Object{
+     #test if the string starts with http(s):. All entries in this list should.
      if( $_ -match "^https?:" -and $ItemMax -gt 0 ){
     
         #decrement count to limit the amount of objects in final text file
@@ -127,6 +128,7 @@ $URLblocklist | ForEach-Object{
         #increase counter to count number of items on webpage
         $Count = $Count +1
 
+        #write to output
         $_ | out-file $URLFilePath -append
     }
 }
@@ -154,6 +156,7 @@ $Domblocklist = Get-Content tempDom.txt
 Remove-Item tempDom.txt
 
 $Domblocklist | ForEach-Object{
+     #test if the domain starts with a word character. this should be enough to prevent bad data
      if( $_ -match "^\w" -and $ItemMax -gt 0 ){
     
         #decrement count to limit the amount of objects in final text file
@@ -162,7 +165,7 @@ $Domblocklist | ForEach-Object{
         #increase counter to count number of items on webpage
         $Count = $Count +1
 
-    	## remove trailing text
+    	#write to output
         $_ | out-file $DomFilePath -append
         
       }
