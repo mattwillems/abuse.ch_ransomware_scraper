@@ -1,3 +1,8 @@
+LogRhythm Threat Research
+Remote File Extraction SmartResponse
+Matt Willems | @MattWillems | matt.willems@logrhythm.com
+v0.1 -- March, 2016
+
 # abuse.ch_ransomware_scraper
 Scrapes the indicator lists from abuse.ch's Ransomware Tracker.
 
